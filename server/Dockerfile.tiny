@@ -13,11 +13,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy app
 COPY main.py .
 COPY config.yaml .
-COPY entrypoint.sh .
-RUN chmod +x entrypoint.sh
+COPY entrypoint-fixed.sh .
+RUN chmod +x entrypoint-fixed.sh
 
-# Copy web UI
-COPY web /app/web
+# Copy web UI (if exists)
+RUN mkdir -p /app/web
+COPY web/ /app/web/ 2>/dev/null || true
 
 # Download smaller TinyLlama model (1.8GB instead of 4.3GB)
 RUN mkdir -p models && \
@@ -37,4 +38,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-CMD ["./entrypoint.sh"]
+CMD ["./entrypoint-fixed.sh"]
