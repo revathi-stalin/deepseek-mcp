@@ -28,9 +28,8 @@ COPY entrypoint-fixed.sh .
 # Make entrypoint executable
 RUN chmod +x entrypoint-fixed.sh
 
-# Copy web UI
-RUN mkdir -p /app/web
-COPY web/ /app/web/ 2>/dev/null || true
+# Copy web UI if directory exists
+COPY web/ /app/web/
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1

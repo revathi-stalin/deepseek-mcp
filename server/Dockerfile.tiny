@@ -16,9 +16,8 @@ COPY config.yaml .
 COPY entrypoint-fixed.sh .
 RUN chmod +x entrypoint-fixed.sh
 
-# Copy web UI (if exists)
-RUN mkdir -p /app/web
-COPY web/ /app/web/ 2>/dev/null || true
+# Copy web UI
+COPY web/ /app/web/
 
 # Download smaller TinyLlama model (1.8GB instead of 4.3GB)
 RUN mkdir -p models && \
