@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: deepseek-tiny-server
+    runtime: docker
+    region: oregon
+    plan: free  # Works on free tier!
+    branch: main
+
+    dockerContext: ./server
+    dockerfilePath: ./server/Dockerfile.tiny
+
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: MODEL_PATH
+        value: models/deepseek-llama.gguf
+      - key: PYTHONUNBUFFERED
+        value: 1
+
+    healthCheckPath: /health
+    autoDeploy: true

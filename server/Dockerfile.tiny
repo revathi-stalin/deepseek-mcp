@@ -1,0 +1,37 @@
+# DeepSeek Server - Tiny Model Version (for Free Tier)
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install dependencies
+RUN apt-get update && apt-get install -y build-essential curl && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN CMAKE_ARGS="-DLLAMA_CUBLAS=off" pip install --no-cache-dir llama-cpp-python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy app
+COPY main.py .
+COPY config.yaml .
+COPY entrypoint.sh .
+RUN chmod +x entrypoint.sh
+
+# Download smaller TinyLlama model (1.8GB instead of 4.3GB)
+RUN mkdir -p models && \
+    cd models && \
+    echo "Downloading TinyLlama model (1.8GB)..." && \
+    curl -L -o tinyllama.gguf \
+      "https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf" && \
+    ln -sf tinyllama.gguf deepseek-llama.gguf && \
+    echo "Model downloaded!"
+
+ENV MODEL_PATH=models/deepseek-llama.gguf
+ENV PORT=8000
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+CMD ["./entrypoint.sh"]
