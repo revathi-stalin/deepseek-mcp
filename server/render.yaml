@@ -1,0 +1,35 @@
+services:
+  - type: web
+    name: deepseek-local-server
+    runtime: docker
+    region: oregon
+    plan: starter
+    branch: main
+    env: docker
+
+    # Docker configuration
+    dockerContext: ./server
+    dockerfilePath: ./server/Dockerfile
+
+    # Environment variables
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: PYTHONUNBUFFERED
+        value: 1
+      - key: MODEL_PATH
+        value: /app/models/deepseek-llama.gguf
+      - key: N_GPU_LAYERS
+        value: 0  # CPU-only on Render
+
+    # Disk storage for model
+    disk:
+      name: model-storage
+      mountPath: /app/models
+      sizeGB: 50
+
+    # Health check
+    healthCheckPath: /health
+
+    # Auto-deploy on git push
+    autoDeploy: true
