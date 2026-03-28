@@ -103,3 +103,4 @@ The server provides clear error messages for:
 ## License
 
 MIT
+# deepseek-mcp
