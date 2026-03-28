@@ -1,0 +1,65 @@
+# Ignore heavy files during Render deployment
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Model weights (these should be downloaded separately)
+models/*.bin
+models/*.safetensors
+models/*.gguf
+checkpoints/
+
+# Training data (too large)
+data/*_train.jsonl
+data/*_val.jsonl
+!data/example_training_data.jsonl
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.venv
+venv/
+ENV/
+
+# Git
+.git/
+.github/
+
+# Documentation (not needed for deployment)
+*.md
+!README.md
+docs/
+
+# Test files
+tests/
+*_test.py

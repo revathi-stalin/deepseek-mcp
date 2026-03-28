@@ -103,4 +103,136 @@ The server provides clear error messages for:
 ## License
 
 MIT
-# deepseek-mcp
+
+# DeepSeek-V3 Fine-tuning Guide
+
+Fine-tune DeepSeek-V3 (671B) on custom domain knowledge using LoRA/QLoRA.
+
+## Fine-tuning Structure
+
+```
+deepseek_mcp/
+├── data/                  # Training datasets
+│   └── example_training_data.jsonl
+├── models/                # Downloaded models
+├── checkpoints/           # Saved checkpoints
+├── logs/                  # Training logs
+├── train.py              # Training script
+├── inference.py          # Inference script
+└── requirements.txt      # Dependencies
+```
+
+## Hardware Requirements
+
+For DeepSeek-V3 (671B) with QLoRA:
+- **Minimum:** 4x A100 (80GB) or equivalent
+- **Recommended:** 8x A100 (80GB) or H100
+- **Storage:** 2TB+ for model weights and checkpoints
+
+## Fine-tuning Setup
+
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+2. Prepare your training data in `data/training_data.jsonl`:
+```json
+{"instruction": "Your question/task", "input": "context", "output": "expected answer"}
+```
+
+3. Run training:
+```bash
+python train.py
+```
+
+4. Run inference:
+```bash
+python inference.py
+```
+
+## Training Tips
+
+- Start with smaller LoRA rank (r=8) for faster training
+- Use gradient checkpointing to save memory
+- Monitor with Weights & Biases (wandb)
+- Adjust batch size based on GPU memory
+- Use multi-GPU with DeepSpeed for faster training
+
+---
+
+# Deploy to Render
+
+Deploy your fine-tuned DeepSeek model as a production API on Render.
+
+## Render Deployment
+
+### Quick Deploy
+
+1. **Push to GitHub** (already done!)
+2. **Connect to Render:**
+   - Go to [render.com](https://render.com)
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repo: `revathi-stalin/deepseek-mcp`
+
+3. **Configure:**
+   - **Runtime:** Docker
+   - **Build Context:** `.`
+   - **Dockerfile:** `./Dockerfile`
+   - **Plan:** Standard (recommended for model inference)
+
+4. **Environment Variables:**
+   ```bash
+   BASE_MODEL_PATH=deepseek-ai/DeepSeek-V3
+   LORA_PATH=/app/models/lora
+   PORT=8000
+   ```
+
+5. **Deploy!** Render will build and deploy your API.
+
+### Using render.yaml (Automatic)
+
+For automatic deployment setup, the `render.yaml` file is configured. Just push to GitHub and connect in Render.
+
+### Test Your Deployed API
+
+```bash
+# Replace with your Render URL
+curl https://your-app.onrender.com/health
+
+# Test chat completion
+curl -X POST https://your-app.onrender.com/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "temperature": 0.7
+  }'
+```
+
+Or use the test script:
+```bash
+python api/test_api.py https://your-app.onrender.com
+```
+
+## API Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | API information |
+| `/health` | GET | Health check |
+| `/v1/models` | GET | List available models |
+| `/v1/chat/completions` | POST | Generate chat completions |
+
+## Project Structure
+
+```
+deepseek_mcp/
+├── api/                    # Inference API
+│   ├── app.py             # FastAPI application
+│   ├── requirements.txt   # API dependencies
+│   └── test_api.py        # API testing script
+├── Dockerfile             # Container configuration
+├── render.yaml            # Render deployment config
+├── .env.example           # Environment variables template
+└── .renderignore          # Files to exclude from deployment
+```

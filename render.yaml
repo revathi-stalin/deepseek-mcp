@@ -1,0 +1,46 @@
+services:
+  # Web Service - Model Inference API
+  - type: web
+    name: deepseek-inference-api
+    runtime: docker
+    region: oregon
+    plan: starter
+    branch: main
+    dockerContext: .
+    dockerfilePath: ./Dockerfile
+
+    # Environment variables
+    envVars:
+      - key: BASE_MODEL_PATH
+        value: deepseek-ai/DeepSeek-V3
+      - key: LORA_PATH
+        value: /app/models/lora
+      - key: PORT
+        value: 8000
+      - key: PYTHONUNBUFFERED
+        value: 1
+
+    # Resource limits (adjust based on your plan)
+    disk:
+      name: models
+      mountPath: /app/models
+      sizeGB: 100
+
+    # Health check
+    healthCheckPath: /health
+
+  # Background Worker - Model Training (optional)
+  - type: worker
+    name: deepseek-training-worker
+    runtime: docker
+    region: oregon
+    plan: starter
+    branch: main
+    dockerContext: .
+    dockerfilePath: ./Dockerfile.training
+
+    envVars:
+      - key: WANDB_API_KEY
+        sync: false
+      - key: HUGGINGFACE_TOKEN
+        sync: false
