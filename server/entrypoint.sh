@@ -10,9 +10,9 @@ if [ ! -f "$MODEL_PATH" ]; then
     echo "Model not found. Downloading..."
     mkdir -p models
 
-    # Download model (4.3GB, may take 10-20 minutes)
+    # Download TinyLlama model for free tier (1.8GB)
     curl -L -o "$MODEL_PATH" \
-      "https://huggingface.co/TheBloke/deepseek-llama-7B-chat-GGUF/resolve/main/deepseek-llama-7b-chat.Q4_K_M.gguf"
+      "https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
 
     echo "Model downloaded successfully!"
     ls -lh "$MODEL_PATH"

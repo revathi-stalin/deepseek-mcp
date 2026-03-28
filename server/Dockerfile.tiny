@@ -16,6 +16,9 @@ COPY config.yaml .
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
+# Copy web UI
+COPY web /app/web
+
 # Download smaller TinyLlama model (1.8GB instead of 4.3GB)
 RUN mkdir -p models && \
     cd models && \
