@@ -23,9 +23,19 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY main.py .
 COPY config.yaml .
+COPY entrypoint.sh .
 
-# Create models directory
-RUN mkdir -p models
+# Make entrypoint executable
+RUN chmod +x entrypoint.sh
+
+# Create models directory and download model
+RUN mkdir -p models && \
+    cd models && \
+    echo "Downloading DeepSeek model (this may take a while)..." && \
+    curl -L -o deepseek-llama.gguf \
+      "https://huggingface.co/TheBloke/deepseek-llama-7B-chat-GGUF/resolve/main/deepseek-llama-7b-chat.Q4_K_M.gguf" && \
+    echo "Model downloaded successfully!" && \
+    ls -lh deepseek-llama.gguf
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
@@ -39,5 +49,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-# Run the application
-CMD ["python", "main.py", "--model", "models/deepseek-llama.gguf", "--host", "0.0.0.0", "--port", "8000", "--n-gpu-layers", "0"]
+# Run the application (downloads model if needed)
+CMD ["./entrypoint.sh"]

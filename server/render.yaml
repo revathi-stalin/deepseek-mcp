@@ -3,13 +3,19 @@ services:
     name: deepseek-local-server
     runtime: docker
     region: oregon
-    plan: starter
+    plan: standard  # Need more RAM for 7B model
     branch: main
-    env: docker
 
     # Docker configuration
     dockerContext: ./server
     dockerfilePath: ./server/Dockerfile
+
+    # Build settings (model download takes time)
+    buildFilter:
+      paths:
+        - server/Dockerfile
+        - server/main.py
+        - server/requirements.txt
 
     # Environment variables
     envVars:
@@ -18,15 +24,7 @@ services:
       - key: PYTHONUNBUFFERED
         value: 1
       - key: MODEL_PATH
-        value: /app/models/deepseek-llama.gguf
-      - key: N_GPU_LAYERS
-        value: 0  # CPU-only on Render
-
-    # Disk storage for model
-    disk:
-      name: model-storage
-      mountPath: /app/models
-      sizeGB: 50
+        value: models/deepseek-llama.gguf
 
     # Health check
     healthCheckPath: /health
