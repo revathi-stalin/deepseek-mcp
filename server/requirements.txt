@@ -1,0 +1,20 @@
+# DeepSeek Local AI Server Requirements
+
+# Core API
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.5.0
+python-multipart>=0.0.6
+
+# Model Backends
+llama-cpp-python>=0.2.0; platform_system == "Darwin" or platform_system == "Linux"
+# For Windows, use: llama-cpp-python>=0.2.0 --no-binary :all:
+
+# Optional: For better performance
+# vllm>=0.2.0  # For server-grade GPUs
+# transformers>=4.36.0  # For HuggingFace models
+# torch>=2.0.0  # For PyTorch models
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.31.0

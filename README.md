@@ -235,4 +235,88 @@ deepseek_mcp/
 ├── render.yaml            # Render deployment config
 ├── .env.example           # Environment variables template
 └── .renderignore          # Files to exclude from deployment
+
+---
+
+# 🚀 Run Your Own Local AI Server
+
+Run DeepSeek models locally on your own hardware with complete privacy. No API keys, no cloud.
+
+## Quick Start
+
+### 1. Install Server Dependencies
+
+```bash
+cd server
+pip install -r requirements.txt
+```
+
+### 2. Download a Model
+
+Download a DeepSeek model in GGUF format from [HuggingFace](https://huggingface.co/models?search=deepseek):
+
+```bash
+# Create models directory
+mkdir -p server/models
+
+# Download a model (example links)
+# - deepseek-llama-7b-chat-q4.gguf (~4GB)
+# - deepseek-llama-13b-chat-q4.gguf (~8GB)
+```
+
+Place the downloaded model in `server/models/`
+
+### 3. Start the Server
+
+**Linux/Mac:**
+```bash
+cd server
+chmod +x start.sh
+./start.sh
+```
+
+**Windows:**
+```bash
+cd server
+start.bat
+```
+
+**Manual start:**
+```bash
+cd server
+python main.py --model models/deepseek-llama.gguf --port 8000
+```
+
+### 4. Use the Web UI
+
+Open [http://localhost:8000/web/](http://localhost:8000/web/) in your browser!
+
+## Features
+
+- 🚀 Fast local inference
+- 🔒 Complete privacy (no cloud)
+- 🌐 OpenAI-compatible API
+- 🎨 Beautiful web UI
+- 💾 GPU acceleration
+- 📊 Swagger documentation
+
+## Server API Endpoints
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /` | Server information |
+| `GET /health` | Health check |
+| `GET /v1/models` | List available models |
+| `POST /v1/chat/completions` | Chat completions |
+| `GET /docs` | API documentation (Swagger) |
+| `GET /web/` | Web UI |
+
+## Requirements
+
+- Python 3.10+
+- 8GB+ RAM (for 7B model)
+- GPU with 4GB+ VRAM (optional)
+- 10GB+ disk space
+
+For more details, see [server/README.md](server/README.md)
 ```
