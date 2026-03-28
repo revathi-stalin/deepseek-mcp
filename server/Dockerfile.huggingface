@@ -1,0 +1,37 @@
+# HuggingFace Spaces - DeepSeek AI Server
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY server/requirements.txt .
+RUN CMAKE_ARGS="-DLLAMA_CUBLAS=off" pip install --no-cache-dir llama-cpp-python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY server/main.py .
+COPY server/config.yaml .
+COPY server/entrypoint-fixed.sh .
+RUN chmod +x entrypoint-fixed.sh
+
+# Copy web UI
+COPY server/web/ /app/web/
+
+# Create models directory
+RUN mkdir -p models
+
+# Download TinyLlama model on startup (1.8GB, works well)
+ENV MODEL_PATH=models/deepseek-llama.gguf
+ENV PORT=7860
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 7860
+
+CMD ["./entrypoint-fixed.sh"]
